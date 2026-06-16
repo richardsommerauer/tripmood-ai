@@ -84,21 +84,8 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# Single Postgres on Heroku via DATABASE_URL (demo setup — no separate
+# solid_cache/queue/cable databases needed).
 production:
-  primary: &primary_production
-    <<: *default
-    database: tripmood_ai_production
-    username: tripmood_ai
-    password: <%= ENV["TRIPMOOD_AI_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: tripmood_ai_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: tripmood_ai_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: tripmood_ai_production_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
