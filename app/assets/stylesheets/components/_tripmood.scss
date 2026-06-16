@@ -230,3 +230,12 @@ $muted-c: #a59c91;
 // feature cards overlap the bottom of the illustration, like the mockup
 .feature-band { position: relative; z-index: 2; margin-top: -56px; }
 @media (max-width: 767px) { .feature-band { margin-top: -28px; } }
+
+// Real hero illustration (when app/assets/images/hero.* is present)
+.hero-scene .hero-photo {
+  width: 100%;
+  height: clamp(220px, 38vw, 340px);
+  object-fit: cover;
+  object-position: center bottom;
+  display: block;
+}

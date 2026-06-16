@@ -1,3 +1,12 @@
+<%# If you drop a real illustration into app/assets/images (hero.png / .jpg / .webp),
+    the landing page uses it automatically. Otherwise the built-in SVG scene below shows. %>
+<% hero_image = %w[hero.png hero.jpg hero.jpeg hero.webp].find { |f| asset_exists?(f) } %>
+
+<% if hero_image %>
+  <div class="hero-scene" aria-hidden="true">
+    <%= image_tag hero_image, alt: "", class: "hero-photo" %>
+  </div>
+<% else %>
 <div class="hero-scene" aria-hidden="true">
   <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -77,3 +86,4 @@
     <g stroke="#b98a5e" stroke-width="1.4" fill="none" opacity=".7"><path d="M250 60q4-4 8 0q4-4 8 0"/><path d="M270 50q3-3 6 0q3-3 6 0"/></g>
   </svg>
 </div>
+<% end %>
