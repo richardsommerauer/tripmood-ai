@@ -30,6 +30,10 @@ class AnthropicClient
 
     text = response.content.find { |block| block.type == :text }&.text
     raise "Empty AI response" if text.nil? || text.strip.empty?
-    text
+
+    # The SDK can hand back binary-labelled (ASCII-8BIT) text for responses
+    # containing non-ASCII characters (e.g. "café"). Relabel as UTF-8 so
+    # downstream string/JSON handling doesn't raise Encoding::CompatibilityError.
+    text.dup.force_encoding(Encoding::UTF_8).scrub
   end
 end

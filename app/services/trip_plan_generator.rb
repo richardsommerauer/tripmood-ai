@@ -53,14 +53,17 @@ class TripPlanGenerator
   private
 
   def ai_plan
+    # Force UTF-8 on each field so non-ASCII values (e.g. "cafés", "São Paulo")
+    # can't trigger Encoding::CompatibilityError while building the prompt.
+    u = ->(v) { v.to_s.dup.force_encoding(Encoding::UTF_8) }
     user_prompt = <<~MSG
-      City: #{@trip.city}
-      Available time: #{@trip.duration}
-      Budget: #{@trip.budget}
-      Mood: #{@trip.mood}
-      Interests: #{@trip.interests_sentence}
-      Energy level: #{@trip.energy}
-      Travel style: #{@trip.travel_style}
+      City: #{u.call(@trip.city)}
+      Available time: #{u.call(@trip.duration)}
+      Budget: #{u.call(@trip.budget)}
+      Mood: #{u.call(@trip.mood)}
+      Interests: #{u.call(@trip.interests_sentence)}
+      Energy level: #{u.call(@trip.energy)}
+      Travel style: #{u.call(@trip.travel_style)}
 
       Return ONLY valid JSON with this exact shape:
       {
