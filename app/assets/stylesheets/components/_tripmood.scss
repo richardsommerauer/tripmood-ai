@@ -212,3 +212,21 @@ $muted-c: #a59c91;
 .adjust-go { margin-left: auto; color: $muted-c; }
 
 @media (max-width: 540px) { .adjust-grid { grid-template-columns: 1fr; } }
+
+// ===== Hero illustration scene =====
+.hero-scene {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);   // full-bleed out of the container
+  margin-top: 36px;
+  line-height: 0;
+}
+.hero-scene svg { width: 100%; height: clamp(200px, 34vw, 300px); display: block; }
+// soft fade into the page background at the very bottom
+.hero-scene::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 40px;
+  background: linear-gradient(to bottom, rgba(251,244,234,0), $cream);
+}
+// feature cards overlap the bottom of the illustration, like the mockup
+.feature-band { position: relative; z-index: 2; margin-top: -56px; }
+@media (max-width: 767px) { .feature-band { margin-top: -28px; } }
