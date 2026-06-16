@@ -1,15 +1,22 @@
 <% content_for :title, "#{@trip.title} · TripMood AI" %>
-<div class="container py-4" style="max-width: 760px;">
+<% owner = user_signed_in? && @trip.user == current_user %>
 
+<header class="appbar">
+  <%= link_to trips_path, class: "round-btn" do %><i class="fa-solid fa-arrow-left"></i><% end %>
+  <div class="appbar-title"><span class="brand-mark"><i class="fa-solid fa-compass"></i></span>TripMood AI</div>
+  <%= link_to new_trip_path, class: "round-btn accent" do %><i class="fa-solid fa-wand-magic-sparkles"></i><% end %>
+</header>
+
+<div class="container pb-5" style="max-width: 760px;">
   <h1 class="text-center mb-3"><%= @trip.title %></h1>
 
   <div class="tm-card p-3 mb-3">
     <div class="statrow">
-      <div class="stat"><div class="text-success mb-1"><i class="fa-solid fa-location-dot"></i></div><div class="k">City</div><div class="v"><%= @trip.city %></div></div>
-      <div class="stat"><div class="text-info mb-1"><i class="fa-solid fa-clock"></i></div><div class="k">Time</div><div class="v"><%= @trip.duration %></div></div>
-      <div class="stat"><div class="text-success mb-1"><i class="fa-solid fa-wallet"></i></div><div class="k">Budget</div><div class="v"><%= @trip.budget %></div></div>
-      <div class="stat"><div class="text-primary mb-1"><i class="<%= mood_icon(@trip.mood) %>"></i></div><div class="k">Mood</div><div class="v"><%= @trip.mood %></div></div>
-      <div class="stat"><div class="text-primary mb-1"><i class="fa-solid fa-hat-cowboy"></i></div><div class="k">Style</div><div class="v"><%= @trip.travel_style %></div></div>
+      <div class="stat"><div class="stat-ic c-green mx-auto mb-1" style="width:34px;height:34px;"><i class="fa-solid fa-location-dot"></i></div><div class="k">City</div><div class="v"><%= @trip.city %></div></div>
+      <div class="stat"><div class="stat-ic c-blue mx-auto mb-1" style="width:34px;height:34px;"><i class="fa-solid fa-clock"></i></div><div class="k">Time</div><div class="v"><%= @trip.duration %></div></div>
+      <div class="stat"><div class="stat-ic c-green mx-auto mb-1" style="width:34px;height:34px;"><i class="fa-solid fa-wallet"></i></div><div class="k">Budget</div><div class="v"><%= @trip.budget %></div></div>
+      <div class="stat"><div class="stat-ic c-orange mx-auto mb-1" style="width:34px;height:34px;"><i class="<%= mood_icon(@trip.mood) %>"></i></div><div class="k">Mood</div><div class="v"><%= @trip.mood %></div></div>
+      <div class="stat"><div class="stat-ic c-orange mx-auto mb-1" style="width:34px;height:34px;"><i class="fa-solid fa-hat-cowboy"></i></div><div class="k">Style</div><div class="v"><%= @trip.travel_style %></div></div>
     </div>
   </div>
 
@@ -55,20 +62,16 @@
          "Transport tips" => [@trip.transport_tips, "fa-bus text-info"],
          "Safety note" => [@trip.safety_tips, "fa-shield-halved text-primary"] }.each do |title, (tips, icon)| %>
       <% next if tips.blank? %>
-      <div class="col-md-6">
-        <div class="tm-card p-4 h-100">
-          <h3 class="h6"><i class="fa-solid <%= icon %> me-2"></i><%= title %></h3>
-          <ul class="mb-0 tm-ink-soft small ps-3"><% tips.each do |t| %><li><%= t %></li><% end %></ul>
-        </div>
-      </div>
+      <div class="col-md-6"><div class="tm-card p-4 h-100">
+        <h3 class="h6"><i class="fa-solid <%= icon %> me-2"></i><%= title %></h3>
+        <ul class="mb-0 tm-ink-soft small ps-3"><% tips.each do |t| %><li><%= t %></li><% end %></ul>
+      </div></div>
     <% end %>
     <% if @trip.relaxed_alt.present? %>
-      <div class="col-md-6">
-        <div class="tm-card p-4 h-100">
-          <h3 class="h6"><i class="fa-solid fa-leaf text-success me-2"></i>Relaxed alternative</h3>
-          <p class="mb-0 tm-ink-soft small"><%= @trip.relaxed_alt %></p>
-        </div>
-      </div>
+      <div class="col-md-6"><div class="tm-card p-4 h-100">
+        <h3 class="h6"><i class="fa-solid fa-leaf text-success me-2"></i>Relaxed alternative</h3>
+        <p class="mb-0 tm-ink-soft small"><%= @trip.relaxed_alt %></p>
+      </div></div>
     <% end %>
   </div>
 
@@ -76,10 +79,37 @@
     <i class="fa-solid fa-clock me-2"></i><%= @trip.reminder %> Prices may vary — use this as a flexible plan, not a fixed booking.
   </div>
 
-  <%# AI chat section %>
+  <%# Quick adjustments — owner regenerates the plan with tweaked inputs %>
+  <% if owner %>
+    <h2 class="h4 mb-3"><i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i>Quick adjustments</h2>
+    <div class="adjust-grid mb-4">
+      <%= button_to trip_path(@trip), method: :patch, params: { trip: { budget: "low" } }, class: "adjust-card" do %>
+        <span class="adjust-i c-green"><i class="fa-solid fa-indian-rupee-sign"></i></span>
+        <span class="adjust-body"><strong>Make it cheaper</strong><small>Lower-cost alternatives</small></span>
+        <span class="adjust-go"><i class="fa-solid fa-chevron-right"></i></span>
+      <% end %>
+      <%= button_to trip_path(@trip), method: :patch, params: { trip: { travel_style: "relaxed", energy: "low" } }, class: "adjust-card" do %>
+        <span class="adjust-i c-purple"><i class="fa-solid fa-umbrella-beach"></i></span>
+        <span class="adjust-body"><strong>Make it more relaxed</strong><small>Slower pace, more downtime</small></span>
+        <span class="adjust-go"><i class="fa-solid fa-chevron-right"></i></span>
+      <% end %>
+      <%= button_to trip_path(@trip), method: :patch, params: { trip: { interests: (@trip.interests + ["food"]).uniq } }, class: "adjust-card" do %>
+        <span class="adjust-i c-orange"><i class="fa-solid fa-utensils"></i></span>
+        <span class="adjust-body"><strong>Add more food</strong><small>Include more eats &amp; treats</small></span>
+        <span class="adjust-go"><i class="fa-solid fa-chevron-right"></i></span>
+      <% end %>
+      <%= button_to trip_path(@trip), method: :patch, params: { trip: { interests: (@trip.interests + ["hidden gems"]).uniq } }, class: "adjust-card" do %>
+        <span class="adjust-i c-sun"><i class="fa-solid fa-gem"></i></span>
+        <span class="adjust-body"><strong>Add hidden gems</strong><small>Offbeat spots and surprises</small></span>
+        <span class="adjust-go"><i class="fa-solid fa-chevron-right"></i></span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# AI chat %>
   <div class="tm-card p-4 mb-4">
     <h2 class="h5"><i class="fa-solid fa-comments text-primary me-2"></i>Chat with TripMood AI about this day</h2>
-    <p class="tm-ink-soft small">Ask to make it cheaper, more relaxed, add food, find hidden gems…</p>
+    <p class="tm-ink-soft small">Ask to make it cheaper, more relaxed, add food, find hidden gems… attach a photo or file too.</p>
     <% if user_signed_in? %>
       <%= button_to "Start a new chat", trip_chats_path(@trip), method: :post, class: "btn btn-primary" %>
       <% if @chats.any? %>
@@ -100,7 +130,7 @@
 
   <div class="d-flex gap-2 justify-content-center flex-wrap">
     <%= link_to "Plan another day", new_trip_path, class: "btn btn-outline-primary" %>
-    <% if user_signed_in? && @trip.user == current_user %>
+    <% if owner %>
       <%= link_to "Adjust / regenerate", edit_trip_path(@trip), class: "btn btn-outline-primary" %>
       <%= button_to "Delete", @trip, method: :delete, class: "btn btn-outline-danger",
             form: { data: { turbo_confirm: "Delete this trip?" } } %>

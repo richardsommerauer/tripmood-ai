@@ -11,6 +11,8 @@ class Trip < ApplicationRecord
   INTEREST_OPTIONS = ["food", "culture", "nature", "temples", "markets", "cafés",
                       "hidden gems", "shopping", "walking", "photography"].freeze
 
+  before_validation { self.interests = Array(interests).reject(&:blank?) }
+
   validates :city, presence: true
   validates :duration, inclusion: { in: DURATIONS, message: "please choose how much time you have" }
   validates :budget,   inclusion: { in: BUDGETS,   message: "please choose a budget" }

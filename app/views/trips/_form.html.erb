@@ -1,4 +1,4 @@
-<%= simple_form_for @trip, html: { class: "trip-form" } do |f| %>
+<%= form_with model: @trip, class: "tm-form" do |f| %>
   <% if @trip.errors.any? %>
     <div class="alert alert-warning">
       <strong><%= pluralize(@trip.errors.count, "thing") %> to fix:</strong>
@@ -6,36 +6,101 @@
     </div>
   <% end %>
 
-  <div class="tm-card p-4 mb-3">
-    <%= f.input :city, label: "City", placeholder: "e.g. Bangalore",
-          input_html: { class: "form-control" } %>
+  <%# City %>
+  <div class="fieldcard">
+    <div class="fc-head">
+      <span class="fc-icon c-orange"><i class="fa-solid fa-location-dot"></i></span>
+      <span class="fc-label">City</span>
+    </div>
+    <div class="input-wrap">
+      <%= f.text_field :city, class: "form-control", placeholder: "e.g. Bangalore" %>
+      <span class="input-ic"><i class="fa-solid fa-building-columns"></i></span>
+    </div>
   </div>
 
-  <div class="tm-card p-4 mb-3">
-    <%= f.input :duration, label: "Available time", as: :radio_buttons,
-          collection: Trip::DURATIONS, item_wrapper_class: "form-check-inline" %>
+  <%# Available time %>
+  <div class="fieldcard">
+    <div class="fc-head">
+      <span class="fc-icon c-blue"><i class="fa-solid fa-clock"></i></span>
+      <span class="fc-label">Available time</span>
+      <span class="fc-help" title="How long you have today">?</span>
+    </div>
+    <div class="opts opts-orange">
+      <% Trip::DURATIONS.each do |o| %>
+        <label class="opt">
+          <%= f.radio_button :duration, o %>
+          <span class="opt-pill"><span class="opt-txt"><%= o %></span><span class="opt-check"><i class="fa-solid fa-check"></i></span></span>
+        </label>
+      <% end %>
+    </div>
   </div>
 
-  <div class="tm-card p-4 mb-3">
-    <%= f.input :budget, label: "Budget", as: :radio_buttons,
-          collection: Trip::BUDGETS, item_wrapper_class: "form-check-inline" %>
-    <%= f.input :energy, label: "Energy level", as: :radio_buttons,
-          collection: Trip::ENERGIES, item_wrapper_class: "form-check-inline", wrapper_html: { class: "mt-3" } %>
-    <%= f.input :travel_style, label: "Travel style", as: :radio_buttons,
-          collection: Trip::STYLES, item_wrapper_class: "form-check-inline", wrapper_html: { class: "mt-3" } %>
+  <%# Budget / Energy / Style (green) %>
+  <div class="fieldcard">
+    <div class="fc-head">
+      <span class="fc-icon c-green"><i class="fa-solid fa-wallet"></i></span>
+      <span class="fc-label">Budget</span>
+    </div>
+    <div class="opts opts-green mb-3">
+      <% Trip::BUDGETS.each do |o| %>
+        <label class="opt"><%= f.radio_button :budget, o %><span class="opt-pill"><span class="opt-txt"><%= o %></span><span class="opt-check"><i class="fa-solid fa-check"></i></span></span></label>
+      <% end %>
+    </div>
+    <div class="fc-head mt-2">
+      <span class="fc-icon c-green"><i class="fa-solid fa-bolt"></i></span>
+      <span class="fc-label">Energy level</span>
+    </div>
+    <div class="opts opts-green mb-3">
+      <% Trip::ENERGIES.each do |o| %>
+        <label class="opt"><%= f.radio_button :energy, o %><span class="opt-pill"><span class="opt-txt"><%= o %></span><span class="opt-check"><i class="fa-solid fa-check"></i></span></span></label>
+      <% end %>
+    </div>
+    <div class="fc-head mt-2">
+      <span class="fc-icon c-green"><i class="fa-solid fa-suitcase-rolling"></i></span>
+      <span class="fc-label">Travel style</span>
+    </div>
+    <div class="opts opts-green">
+      <% Trip::STYLES.each do |o| %>
+        <label class="opt"><%= f.radio_button :travel_style, o %><span class="opt-pill"><span class="opt-txt"><%= o %></span><span class="opt-check"><i class="fa-solid fa-check"></i></span></span></label>
+      <% end %>
+    </div>
   </div>
 
-  <div class="tm-card p-4 mb-3">
-    <%= f.input :mood, label: "Mood", as: :radio_buttons,
-          collection: Trip::MOODS, item_wrapper_class: "form-check-inline" %>
+  <%# Mood %>
+  <div class="fieldcard">
+    <div class="fc-head">
+      <span class="fc-icon c-orange"><i class="fa-solid fa-face-smile"></i></span>
+      <span class="fc-label">Mood</span>
+      <span class="fc-help" title="How are you feeling today?">?</span>
+    </div>
+    <div class="opts opts-orange">
+      <% Trip::MOODS.each do |o| %>
+        <label class="opt">
+          <%= f.radio_button :mood, o %>
+          <span class="opt-pill"><span class="opt-lead"><i class="<%= mood_icon(o) %>"></i></span><span class="opt-txt"><%= o %></span><span class="opt-check"><i class="fa-solid fa-check"></i></span></span>
+        </label>
+      <% end %>
+    </div>
   </div>
 
-  <div class="tm-card p-4 mb-4">
-    <%= f.input :interests, label: "Interests (pick any)", as: :check_boxes,
-          collection: Trip::INTEREST_OPTIONS, item_wrapper_class: "form-check-inline" %>
+  <%# Interests %>
+  <div class="fieldcard">
+    <div class="fc-head">
+      <span class="fc-icon c-orange"><i class="fa-solid fa-star"></i></span>
+      <span class="fc-label">Interests <span class="text-muted fw-normal fs-6">(pick any)</span></span>
+    </div>
+    <div class="opts opts-orange">
+      <%= hidden_field_tag "trip[interests][]", "" %>
+      <% Trip::INTEREST_OPTIONS.each do |o| %>
+        <label class="opt">
+          <%= check_box_tag "trip[interests][]", o, @trip.interests.include?(o), id: "int_#{o.parameterize}" %>
+          <span class="opt-pill"><span class="opt-lead"><i class="<%= interest_icon(o) %>"></i></span><span class="opt-txt"><%= o %></span><span class="opt-check"><i class="fa-solid fa-check"></i></span></span>
+        </label>
+      <% end %>
+    </div>
   </div>
 
-  <%= f.button :submit, submit_label, class: "btn btn-primary btn-lg w-100" %>
+  <%= f.submit submit_label, class: "btn btn-primary btn-lg w-100" %>
   <p class="text-center tm-ink-soft mt-2 small">
     <i class="fa-solid fa-shield-heart me-1"></i>Works as a demo even without an API key.
   </p>

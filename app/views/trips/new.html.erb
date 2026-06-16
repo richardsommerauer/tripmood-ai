@@ -1,6 +1,11 @@
 <% content_for :title, "Plan my day · TripMood AI" %>
-<div class="container py-4" style="max-width: 680px;">
-  <h1 class="text-center mb-1">Plan my day</h1>
+<header class="appbar">
+  <%= link_to root_path, class: "round-btn" do %><i class="fa-solid fa-arrow-left"></i><% end %>
+  <div class="appbar-title">Plan my day</div>
+  <span class="round-btn accent"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+</header>
+<div class="container pb-5" style="max-width: 600px;">
+  <div class="stepper"><span class="on"></span><span></span><span></span><span></span></div>
   <p class="text-center tm-ink-soft mb-4">Tell us how you feel, and we'll build your day.</p>
   <%= render "form", submit_label: "Generate my plan" %>
 </div>

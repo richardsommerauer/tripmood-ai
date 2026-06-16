@@ -1,9 +1,10 @@
 <% content_for :title, "Edit trip · TripMood AI" %>
-<div class="container py-4" style="max-width: 680px;">
-  <h1 class="text-center mb-1">Adjust your day</h1>
+<header class="appbar">
+  <%= link_to @trip, class: "round-btn" do %><i class="fa-solid fa-arrow-left"></i><% end %>
+  <div class="appbar-title">Adjust your day</div>
+  <span class="round-btn accent"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+</header>
+<div class="container pb-5" style="max-width: 600px;">
   <p class="text-center tm-ink-soft mb-4">Change anything — we'll regenerate the plan.</p>
   <%= render "form", submit_label: "Regenerate my plan" %>
-  <div class="text-center mt-3">
-    <%= link_to "← Back to plan", @trip, class: "btn btn-link" %>
-  </div>
 </div>
