@@ -1,0 +1,137 @@
+// TripMood AI — shared component styles
+
+body { min-height: 100vh; }
+
+// Soft background wash like the mockups
+body {
+  background:
+    radial-gradient(900px 480px at 85% -8%, #ffe6cb 0%, rgba(255,230,203,0) 60%),
+    radial-gradient(800px 460px at -10% 6%, #e7f1e4 0%, rgba(231,241,228,0) 55%),
+    $cream;
+  background-attachment: fixed;
+}
+
+.tm-ink-soft { color: $ink-soft; }
+
+// ---- Navbar ----
+.navbar-tm {
+  background: rgba(255,253,249,.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid $line;
+}
+.navbar-tm .navbar-brand { font-family: $headers-font; font-weight: 600; font-size: 1.3rem; }
+.brand-mark {
+  display: inline-grid; place-items: center;
+  width: 38px; height: 38px; border-radius: 11px;
+  background: $orange-soft; color: $orange; margin-right: 8px;
+}
+.brand-ai { color: $orange; }
+
+// ---- Buttons ----
+.btn { border-radius: 999px; font-weight: 600; }
+.btn-primary { background: $orange; border-color: $orange; }
+.btn-primary:hover { background: $orange-deep; border-color: $orange-deep; }
+.btn-outline-primary { color: $orange; border-color: $orange; }
+.btn-outline-primary:hover { background: $orange; border-color: $orange; }
+.btn-lg { padding: .8rem 1.6rem; }
+
+// ---- Cards / panels ----
+.tm-card {
+  background: $card; border: 1px solid $line; border-radius: 1.1rem;
+  box-shadow: 0 10px 26px rgba(80,52,28,.07);
+}
+
+// ---- Hero ----
+.hero-title { font-size: clamp(2.4rem, 6vw, 3.6rem); letter-spacing: -.02em; line-height: 1.1; }
+.hero-title .accent { color: $orange; }
+.hero-sub { font-size: 1.15rem; color: $ink-soft; }
+
+// ---- Chips ----
+.tm-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: $card; border: 1.5px solid $line; border-radius: 999px;
+  padding: 8px 16px; font-size: .92rem; font-weight: 500; color: $ink;
+  text-decoration: none; transition: all .12s ease;
+}
+.tm-chip:hover { border-color: $orange; transform: translateY(-2px); color: $orange; }
+.tm-chip i { color: $orange; }
+
+// ---- Badges (mood etc.) ----
+.tm-badge {
+  display: inline-block; border: 1.5px solid $line; border-radius: 999px;
+  padding: 4px 12px; font-size: .8rem; font-weight: 600; color: $ink-soft;
+  background: #fff; text-transform: capitalize;
+}
+.tm-badge-mood { background: $orange; border-color: $orange; color: #fff; }
+
+// ---- Trip cards grid ----
+.trip-card { transition: transform .12s ease, border-color .12s ease; height: 100%; }
+.trip-card:hover { transform: translateY(-3px); border-color: $orange; }
+.trip-card .trip-emoji {
+  width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center;
+  background: $orange-soft; color: $orange; font-size: 1.5rem;
+}
+
+// ---- Itinerary stops ----
+.stop {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: $card; border: 1px solid $line; border-radius: 1.1rem; padding: 16px 18px;
+}
+.stop-num {
+  flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%;
+  background: $orange; color: #fff; font-weight: 700; font-family: $headers-font;
+  display: grid; place-items: center;
+}
+.stop-icon {
+  flex: 0 0 auto; width: 46px; height: 46px; border-radius: 13px;
+  background: $orange-soft; color: $orange; display: grid; place-items: center; font-size: 1.3rem;
+}
+.stop-duration {
+  margin-left: auto; color: $blue; font-weight: 600; font-size: .85rem; white-space: nowrap;
+  border-left: 1px solid $line; padding-left: 14px; align-self: center;
+}
+
+// ---- Stat row ----
+.statrow { display: flex; flex-wrap: wrap; }
+.statrow .stat { flex: 1; min-width: 90px; text-align: center; padding: 6px 8px; position: relative; }
+.statrow .stat + .stat::before { content:""; position:absolute; left:0; top:8px; bottom:8px; width:1px; background:$line; }
+.statrow .stat .k { font-size: .68rem; text-transform: uppercase; letter-spacing:.05em; color: $ink-soft; }
+.statrow .stat .v { font-weight: 600; font-size: .9rem; text-transform: capitalize; }
+
+// ---- Reminder banner ----
+.tm-reminder {
+  background: #fdf1e0; border: 1.5px solid #f4d9af; color: #8a5a1c;
+  border-radius: 1.1rem; padding: 14px 18px; font-weight: 500;
+}
+
+// ---- Chat ----
+.chat-window { display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 80%; padding: 12px 16px; border-radius: 1.1rem; line-height: 1.5; }
+.msg-user { align-self: flex-end; background: $orange; color: #fff; border-bottom-right-radius: .3rem; }
+.msg-assistant { align-self: flex-start; background: $card; border: 1px solid $line; border-bottom-left-radius: .3rem; }
+.msg .msg-attach { font-size: .8rem; opacity: .85; margin-top: 6px; }
+.msg-meta { font-size: .72rem; color: $ink-soft; margin-top: 4px; }
+
+// ---- Form chips (simple_form radio/checkbox as pills) ----
+.trip-form .form-label, .trip-form legend.col-form-label, .trip-form .col-form-label {
+  font-weight: 600; font-size: 1.05rem; margin-bottom: .5rem; color: $ink;
+}
+.trip-form .form-check.form-check-inline {
+  padding-left: 0; margin: 0 .5rem .5rem 0;
+}
+.trip-form .form-check-inline .form-check-input {
+  position: absolute; opacity: 0; pointer-events: none;
+}
+.trip-form .form-check-inline .form-check-label {
+  display: inline-block; padding: 9px 16px; border: 1.5px solid $line;
+  border-radius: 999px; background: #fff; color: $ink-soft; font-weight: 500;
+  cursor: pointer; transition: all .12s ease; margin: 0; text-transform: capitalize;
+}
+.trip-form .form-check-inline .form-check-label::first-letter { text-transform: uppercase; }
+.trip-form .form-check-input:checked + .form-check-label {
+  background: $orange-soft; border-color: $orange; color: $orange-deep;
+}
+.trip-form .form-check-input:focus-visible + .form-check-label {
+  box-shadow: 0 0 0 3px rgba(207,106,45,.25);
+}
+.trip-form input[type="text"], .trip-form input[type="email"] { border-radius: .8rem; padding: .7rem .9rem; }

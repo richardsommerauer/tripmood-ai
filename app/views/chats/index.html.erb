@@ -1,0 +1,18 @@
+<% content_for :title, "Chats · TripMood AI" %>
+<div class="container py-4" style="max-width: 680px;">
+  <h1 class="mb-1">Chats about your <%= @trip.city %> day</h1>
+  <%= link_to "← Back to plan", @trip, class: "btn btn-link ps-0 mb-3" %>
+  <%= button_to "Start a new chat", trip_chats_path(@trip), method: :post, class: "btn btn-primary mb-3" %>
+  <% if @chats.any? %>
+    <div class="list-group">
+      <% @chats.each do |chat| %>
+        <%= link_to chat, class: "list-group-item list-group-item-action d-flex justify-content-between" do %>
+          <span><i class="fa-regular fa-comment me-2"></i><%= chat.title %></span>
+          <span class="badge bg-secondary rounded-pill"><%= chat.messages.count %></span>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="tm-ink-soft">No chats yet — start one above.</p>
+  <% end %>
+</div>

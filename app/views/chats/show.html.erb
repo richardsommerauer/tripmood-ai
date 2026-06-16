@@ -1,0 +1,44 @@
+<% content_for :title, "#{@chat.title} · TripMood AI" %>
+<div class="container py-4" style="max-width: 680px;">
+  <%= link_to "← Back to plan", @trip, class: "btn btn-link ps-0" %>
+  <h1 class="h3 mb-3"><%= @chat.title %></h1>
+
+  <div class="tm-card p-4 mb-3">
+    <div class="chat-window mb-3">
+      <% if @chat.messages.none? %>
+        <div class="msg msg-assistant">
+          Hi! I built your <strong><%= @trip.city %></strong> day plan. Want it cheaper, more relaxed,
+          more food, or with a few hidden gems? Ask me anything — and you can attach a photo or file too.
+        </div>
+      <% end %>
+      <% @chat.messages.ordered.each do |message| %>
+        <div class="msg <%= message.from_user? ? 'msg-user' : 'msg-assistant' %>">
+          <%= simple_format(message.content) %>
+          <% if message.file.attached? %>
+            <div class="msg-attach"><i class="fa-solid fa-paperclip me-1"></i><%= message.file.filename %></div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <%= simple_form_for [@chat, Message.new], html: { multipart: true } do |f| %>
+      <div class="d-flex gap-2 align-items-end">
+        <div class="flex-grow-1">
+          <%= f.input :content, label: false, placeholder: "Ask TripMood to tweak your day…",
+                input_html: { class: "form-control" } %>
+        </div>
+        <%= f.button :submit, "Send", class: "btn btn-primary" %>
+      </div>
+      <div class="mt-2">
+        <label class="btn btn-sm btn-outline-primary mb-0">
+          <i class="fa-solid fa-paperclip me-1"></i>Attach a file
+          <%= f.file_field :file, class: "d-none" %>
+        </label>
+        <span class="small tm-ink-soft ms-2">Optional — multimodal (photo, ticket, menu…)</span>
+      </div>
+    <% end %>
+  </div>
+
+  <%= button_to "Delete chat", @chat, method: :delete, class: "btn btn-sm btn-outline-danger",
+        form: { data: { turbo_confirm: "Delete this chat?" } } %>
+</div>

@@ -1,0 +1,109 @@
+<% content_for :title, "#{@trip.title} · TripMood AI" %>
+<div class="container py-4" style="max-width: 760px;">
+
+  <h1 class="text-center mb-3"><%= @trip.title %></h1>
+
+  <div class="tm-card p-3 mb-3">
+    <div class="statrow">
+      <div class="stat"><div class="text-success mb-1"><i class="fa-solid fa-location-dot"></i></div><div class="k">City</div><div class="v"><%= @trip.city %></div></div>
+      <div class="stat"><div class="text-info mb-1"><i class="fa-solid fa-clock"></i></div><div class="k">Time</div><div class="v"><%= @trip.duration %></div></div>
+      <div class="stat"><div class="text-success mb-1"><i class="fa-solid fa-wallet"></i></div><div class="k">Budget</div><div class="v"><%= @trip.budget %></div></div>
+      <div class="stat"><div class="text-primary mb-1"><i class="<%= mood_icon(@trip.mood) %>"></i></div><div class="k">Mood</div><div class="v"><%= @trip.mood %></div></div>
+      <div class="stat"><div class="text-primary mb-1"><i class="fa-solid fa-hat-cowboy"></i></div><div class="k">Style</div><div class="v"><%= @trip.travel_style %></div></div>
+    </div>
+  </div>
+
+  <p class="fs-5 mb-2"><i class="fa-solid fa-wand-magic-sparkles text-warning me-2"></i><%= @trip.summary %></p>
+  <% if @trip.ai_source == "mock" %>
+    <p class="small text-success mb-3"><i class="fa-solid fa-circle-info me-1"></i>Demo plan (no API key set) — add <code>OPENAI_API_KEY</code> for live AI.</p>
+  <% end %>
+
+  <% if @trip.interests.any? %>
+    <div class="mb-4">
+      <% @trip.interests.each do |i| %>
+        <span class="tm-badge me-1 mb-1"><i class="<%= interest_icon(i) %> me-1 text-warning"></i><%= i %></span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Itinerary %>
+  <div class="d-flex flex-column gap-3 mb-4">
+    <% @trip.stops.each_with_index do |stop, i| %>
+      <div class="stop">
+        <span class="stop-num"><%= i + 1 %></span>
+        <span class="stop-icon"><i class="<%= stop_icon(stop["name"]) %>"></i></span>
+        <div class="flex-grow-1">
+          <h3 class="h6 mb-1"><%= stop["name"] %></h3>
+          <p class="mb-0 tm-ink-soft small"><%= stop["why"] %></p>
+        </div>
+        <% if stop["duration"].present? %>
+          <span class="stop-duration"><i class="fa-regular fa-clock me-1"></i><%= stop["duration"] %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @trip.why_mood.present? %>
+    <div class="tm-card p-4 mb-3">
+      <h2 class="h5"><i class="<%= mood_icon(@trip.mood) %> text-primary me-2"></i>Why this matches your mood</h2>
+      <p class="mb-0 tm-ink-soft"><%= @trip.why_mood %></p>
+    </div>
+  <% end %>
+
+  <div class="row g-3 mb-3">
+    <% { "Budget tips" => [@trip.budget_tips, "fa-wallet text-success"],
+         "Transport tips" => [@trip.transport_tips, "fa-bus text-info"],
+         "Safety note" => [@trip.safety_tips, "fa-shield-halved text-primary"] }.each do |title, (tips, icon)| %>
+      <% next if tips.blank? %>
+      <div class="col-md-6">
+        <div class="tm-card p-4 h-100">
+          <h3 class="h6"><i class="fa-solid <%= icon %> me-2"></i><%= title %></h3>
+          <ul class="mb-0 tm-ink-soft small ps-3"><% tips.each do |t| %><li><%= t %></li><% end %></ul>
+        </div>
+      </div>
+    <% end %>
+    <% if @trip.relaxed_alt.present? %>
+      <div class="col-md-6">
+        <div class="tm-card p-4 h-100">
+          <h3 class="h6"><i class="fa-solid fa-leaf text-success me-2"></i>Relaxed alternative</h3>
+          <p class="mb-0 tm-ink-soft small"><%= @trip.relaxed_alt %></p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="tm-reminder mb-4">
+    <i class="fa-solid fa-clock me-2"></i><%= @trip.reminder %> Prices may vary — use this as a flexible plan, not a fixed booking.
+  </div>
+
+  <%# AI chat section %>
+  <div class="tm-card p-4 mb-4">
+    <h2 class="h5"><i class="fa-solid fa-comments text-primary me-2"></i>Chat with TripMood AI about this day</h2>
+    <p class="tm-ink-soft small">Ask to make it cheaper, more relaxed, add food, find hidden gems…</p>
+    <% if user_signed_in? %>
+      <%= button_to "Start a new chat", trip_chats_path(@trip), method: :post, class: "btn btn-primary" %>
+      <% if @chats.any? %>
+        <hr>
+        <div class="list-group">
+          <% @chats.each do |chat| %>
+            <%= link_to chat, class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+              <span><i class="fa-regular fa-comment me-2"></i><%= chat.title %></span>
+              <span class="badge bg-secondary rounded-pill"><%= chat.messages.count %></span>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <%= link_to "Log in to chat", new_user_session_path, class: "btn btn-outline-primary" %>
+    <% end %>
+  </div>
+
+  <div class="d-flex gap-2 justify-content-center flex-wrap">
+    <%= link_to "Plan another day", new_trip_path, class: "btn btn-outline-primary" %>
+    <% if user_signed_in? && @trip.user == current_user %>
+      <%= link_to "Adjust / regenerate", edit_trip_path(@trip), class: "btn btn-outline-primary" %>
+      <%= button_to "Delete", @trip, method: :delete, class: "btn btn-outline-danger",
+            form: { data: { turbo_confirm: "Delete this trip?" } } %>
+    <% end %>
+  </div>
+</div>

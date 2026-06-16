@@ -1,2 +1,54 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<% content_for :title, "TripMood AI — Your day, matched to your mood." %>
+
+<div class="container py-5" style="max-width: 720px;">
+  <div class="text-center">
+    <p class="text-uppercase fw-bold text-success mb-2" style="letter-spacing:.16em;">TripMood AI</p>
+    <h1 class="hero-title mb-3">Your day,<br>matched to your <span class="accent">mood.</span></h1>
+    <p class="hero-sub mb-4 mx-auto" style="max-width:480px;">
+      Don't know what to do today? Tell TripMood your mood, time and budget —
+      and get a realistic mini travel plan.
+    </p>
+    <%= link_to new_trip_path, class: "btn btn-primary btn-lg" do %>
+      Plan my day <i class="fa-solid fa-wand-magic-sparkles ms-1"></i>
+    <% end %>
+
+    <div class="d-flex flex-wrap gap-2 justify-content-center mt-4">
+      <%= link_to new_trip_path, class: "tm-chip" do %><i class="fa-solid fa-face-smile"></i> Tired but curious<% end %>
+      <%= link_to new_trip_path, class: "tm-chip" do %><i class="fa-solid fa-wallet"></i> Low budget<% end %>
+      <%= link_to new_trip_path, class: "tm-chip" do %><i class="fa-solid fa-utensils"></i> Food + culture<% end %>
+      <%= link_to new_trip_path, class: "tm-chip" do %><i class="fa-solid fa-clock"></i> 5 hours in Bangalore<% end %>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-4 text-center">
+    <div class="col-md-4"><div class="tm-card p-4 h-100">
+      <div class="fs-3 text-success mb-2"><i class="fa-solid fa-location-dot"></i></div>
+      <h3 class="h6">Real places</h3><p class="tm-ink-soft small mb-0">Curated, local &amp; practical</p>
+    </div></div>
+    <div class="col-md-4"><div class="tm-card p-4 h-100">
+      <div class="fs-3 text-primary mb-2"><i class="fa-solid fa-heart"></i></div>
+      <h3 class="h6">Mood-first</h3><p class="tm-ink-soft small mb-0">Plans that fit how you feel</p>
+    </div></div>
+    <div class="col-md-4"><div class="tm-card p-4 h-100">
+      <div class="fs-3 text-info mb-2"><i class="fa-solid fa-clock"></i></div>
+      <h3 class="h6">Saves time</h3><p class="tm-ink-soft small mb-0">Smart plans in seconds</p>
+    </div></div>
+  </div>
+
+  <% if @recent_trips.any? %>
+    <h2 class="h4 mt-5 mb-3 text-center">Recently planned</h2>
+    <div class="row g-3">
+      <% @recent_trips.first(3).each do |trip| %>
+        <div class="col-md-4">
+          <%= link_to trip, class: "text-decoration-none" do %>
+            <div class="tm-card trip-card p-3">
+              <span class="tm-badge tm-badge-mood mb-2 d-inline-block"><%= trip.mood %></span>
+              <h3 class="h6 mb-1"><%= trip.title.presence || "#{trip.city} day" %></h3>
+              <p class="tm-ink-soft small mb-0"><i class="fa-solid fa-location-dot me-1"></i><%= trip.city %> · <%= trip.duration %></p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
