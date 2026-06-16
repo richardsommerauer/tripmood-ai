@@ -87,13 +87,13 @@ messages
 - **Ruby 3.3** · **Rails 8.1** · **PostgreSQL**
 - **Devise** (auth) · **Active Storage** (file attachments)
 - **Bootstrap 5.3** + **simple_form** + **Font Awesome** (Le Wagon minimal template)
-- AI via **OpenAI Chat Completions** (plain `Net::HTTP`, no extra gem) with a
+- AI via the **official Anthropic (Claude) Ruby SDK** (`anthropic` gem) with a
   **built-in mock fallback** so it always works for a demo.
 
 ### AI = service objects (slim controllers)
 - `app/services/trip_plan_generator.rb` — builds the day plan from a Trip.
 - `app/services/chat_responder.rb` — generates the assistant's chat replies.
-- `app/services/openai_client.rb` — thin OpenAI client; never logs the key/prompt.
+- `app/services/anthropic_client.rb` — thin Claude client; never logs the key/prompt.
 
 **Honest by design:** the AI never invents exact prices or live opening hours —
 it says _"please check current opening hours"_, _"prices may vary"_, and treats
@@ -106,20 +106,18 @@ the plan as flexible, not a fixed booking.
 ```bash
 bundle install
 rails db:create db:migrate db:seed
-cp .env.example .env   # optional — add OPENAI_API_KEY for live AI
-rails server
+cp .env.example .env   # optional — add ANTHROPIC_API_KEY for live AI
+rails server           # http://localhost:3210
 ```
-
-Open http://localhost:3000.
 
 **Demo login (from seeds):** `demo@tripmood.ai` / `password123`
 
 ### Environment variables
 
-| Variable         | Required | Default       | Notes                                   |
-|------------------|----------|---------------|-----------------------------------------|
-| `OPENAI_API_KEY` | No       | _(none)_      | Empty → app uses the built-in mock plan |
-| `OPENAI_MODEL`   | No       | `gpt-4o-mini` | Any OpenAI chat model                   |
+| Variable            | Required | Default          | Notes                                     |
+|---------------------|----------|------------------|-------------------------------------------|
+| `ANTHROPIC_API_KEY` | No       | _(none)_         | Empty → app uses the built-in mock plan   |
+| `ANTHROPIC_MODEL`   | No       | `claude-opus-4-8`| e.g. `claude-haiku-4-5` for a cheaper demo |
 
 > Secrets are never committed: `.env` is git-ignored; only `.env.example` (with a
 > placeholder) is tracked. The API key and full prompts are never logged.
@@ -154,7 +152,7 @@ missing API key never crashes generation.
 heroku create
 heroku addons:create heroku-postgresql:essential-0
 heroku config:set RAILS_MASTER_KEY=$(cat config/master.key)
-heroku config:set OPENAI_API_KEY=...   # optional; omit to demo with the mock
+heroku config:set ANTHROPIC_API_KEY=sk-ant-...   # optional; omit to demo with the mock
 git push heroku master
 # db:migrate runs automatically via the Procfile `release` step
 heroku run rails db:seed

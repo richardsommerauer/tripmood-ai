@@ -25,9 +25,13 @@ class ChatResponder
   end
 
   def call
-    if OpenaiClient.available?
+    if AnthropicClient.available?
       begin
-        return OpenaiClient.chat(messages, temperature: 0.7).strip
+        return AnthropicClient.chat(
+          system_prompt: "#{SYSTEM_PROMPT}\n\n#{trip_context}",
+          messages: conversation_messages,
+          max_tokens: 1024
+        ).strip
       rescue => e
         Rails.logger.warn("[ChatResponder] AI failed, using mock: #{e.message}")
       end
@@ -37,14 +41,13 @@ class ChatResponder
 
   private
 
-  def messages
-    msgs = [{ role: "system", content: SYSTEM_PROMPT }, { role: "system", content: trip_context }]
-    @chat.messages.ordered.each do |m|
+  # Just the user/assistant turns — the system prompt is passed separately.
+  def conversation_messages
+    @chat.messages.ordered.map do |m|
       content = m.content.to_s
       content += "\n[The user attached a file: #{m.file.filename}]" if m.file.attached?
-      msgs << { role: m.role, content: content }
+      { role: m.role, content: content }
     end
-    msgs
   end
 
   def trip_context

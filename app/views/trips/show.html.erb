@@ -22,7 +22,7 @@
 
   <p class="fs-5 mb-2"><i class="fa-solid fa-wand-magic-sparkles text-warning me-2"></i><%= @trip.summary %></p>
   <% if @trip.ai_source == "mock" %>
-    <p class="small text-success mb-3"><i class="fa-solid fa-circle-info me-1"></i>Demo plan (no API key set) — add <code>OPENAI_API_KEY</code> for live AI.</p>
+    <p class="small text-success mb-3"><i class="fa-solid fa-circle-info me-1"></i>Demo plan (no API key set) — add <code>ANTHROPIC_API_KEY</code> for live AI.</p>
   <% end %>
 
   <% if @trip.interests.any? %>

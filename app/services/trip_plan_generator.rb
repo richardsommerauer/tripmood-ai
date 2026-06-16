@@ -40,7 +40,7 @@ class TripPlanGenerator
   end
 
   def call
-    if OpenaiClient.available?
+    if AnthropicClient.available?
       begin
         return ai_plan.merge("reminder" => REMINDER, "source" => "ai")
       rescue => e
@@ -72,13 +72,25 @@ class TripPlanGenerator
         "relaxedAlternative": "one calmer variation"
       }
       Use 3 to 5 stops. Do not invent exact prices or opening hours.
+      Respond with ONLY the JSON object — no prose, no markdown code fences.
     MSG
 
-    raw = OpenaiClient.chat(
-      [{ role: "system", content: SYSTEM_PROMPT }, { role: "user", content: user_prompt }],
-      json: true
+    raw = AnthropicClient.chat(
+      system_prompt: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: user_prompt }],
+      max_tokens: 2048
     )
-    normalize(JSON.parse(raw))
+    normalize(parse_json(raw))
+  end
+
+  # Claude is asked for raw JSON, but strip code fences / extra prose defensively.
+  def parse_json(raw)
+    text = raw.to_s.strip
+    text = text.sub(/\A```(?:json)?\s*/i, "").sub(/\s*```\z/, "").strip
+    if (open = text.index("{")) && (close = text.rindex("}"))
+      text = text[open..close]
+    end
+    JSON.parse(text)
   end
 
   def normalize(h)
