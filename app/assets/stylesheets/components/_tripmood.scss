@@ -57,6 +57,35 @@ body {
   background: $orange; color: #fff; font-size: 1.5rem;
   box-shadow: 0 8px 18px rgba(207,106,45,.35);
 }
+// Home banner is a link into the plans
+.chat-highlight-link { color: $ink; transition: transform .12s ease, box-shadow .12s ease; }
+.chat-highlight-link:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(80,52,28,.13); color: $ink; }
+.chat-highlight-go {
+  display: inline-grid; place-items: center; width: 46px; height: 46px;
+  border-radius: 50%; background: $orange; color: #fff; font-size: 1rem;
+}
+
+// ---- Chat bar (real message input, LifeFolder-style) ----
+.chat-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: $card; border: 1.5px solid $orange; border-radius: 999px;
+  padding: 6px 6px 6px 14px;
+  box-shadow: 0 0 0 3px $orange-soft;
+}
+.chat-bar-spark {
+  display: inline-grid; place-items: center; flex-shrink: 0;
+  width: 28px; height: 28px; border-radius: 8px;
+  background: $orange; color: #fff; font-size: 11px; font-weight: 700;
+}
+.chat-bar-input {
+  flex: 1 1 auto; min-width: 0;
+  border: none; outline: none; background: transparent;
+  font-size: 1rem; font-weight: 500; color: $ink;
+}
+.chat-bar-input::placeholder { color: $ink-soft; }
+.chat-bar-send { flex-shrink: 0; }
+// Example-prompt chips submit their own little form; keep them inline & tidy
+.chat-example { border: 1.5px solid $line; background: $card; }
 
 // ---- Chips ----
 .tm-chip {

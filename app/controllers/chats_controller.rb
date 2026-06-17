@@ -10,6 +10,12 @@ class ChatsController < ApplicationController
     @trip = Trip.find(params[:trip_id])
     @chat = @trip.chats.new(user: current_user, title: chat_title)
     if @chat.save
+      # If the user typed a first message in the chat bar, send it right away
+      # and generate the assistant's reply, so the chat opens already started.
+      if first_message.present?
+        @chat.messages.create!(role: "user", content: first_message)
+        @chat.messages.create!(role: "assistant", content: ChatResponder.call(@chat))
+      end
       redirect_to @chat
     else
       redirect_to @trip, alert: "Could not start the chat."
@@ -31,7 +37,12 @@ class ChatsController < ApplicationController
 
   private
 
+  def first_message
+    @first_message ||= params[:message].to_s.strip
+  end
+
   def chat_title
-    params.dig(:chat, :title).presence || "Chat about my #{Trip.find(params[:trip_id]).city} day"
+    return first_message.truncate(60) if first_message.present?
+    params.dig(:chat, :title).presence || "Chat about my #{@trip.city} day"
   end
 end

@@ -41,9 +41,23 @@
         <h2 class="h5 mb-1">Chat with TripMood AI about this day</h2>
         <p class="tm-ink-soft small mb-3">Ask to make it cheaper, more relaxed, add food, find hidden gems… attach a photo or file too.</p>
         <% if user_signed_in? %>
-          <%= button_to trip_chats_path(@trip), method: :post, class: "btn btn-primary" do %>
-            <i class="fa-regular fa-comments me-1"></i> Start a new chat
+          <%# Real chat bar — type a message and it starts a chat right away %>
+          <%= form_with url: trip_chats_path(@trip), method: :post, class: "chat-bar" do %>
+            <span class="chat-bar-spark" aria-hidden="true">AI</span>
+            <input type="text" name="message" class="chat-bar-input" autocomplete="off"
+                   placeholder="Ask TripMood to tweak your day…" aria-label="Your message">
+            <button type="submit" class="btn btn-primary chat-bar-send">
+              <i class="fa-solid fa-paper-plane me-1"></i>Send
+            </button>
           <% end %>
+
+          <%# Example prompts — each starts a chat seeded with that question %>
+          <div class="d-flex flex-wrap gap-2 mt-3">
+            <% ["Make it cheaper", "Make it more relaxed", "Add a food stop", "Suggest hidden gems", "Good for families?"].each do |ex| %>
+              <%= button_to ex, trip_chats_path(@trip), params: { message: ex }, method: :post, class: "tm-chip chat-example" %>
+            <% end %>
+          </div>
+
           <% if @chats.any? %>
             <div class="list-group mt-3">
               <% @chats.each do |chat| %>
