@@ -29,6 +29,28 @@ class TripsController < ApplicationController
     end
   end
 
+  # Natural-language starter from the home page: a free-text brief becomes a
+  # structured Trip. If we can't pin down the essentials (city), we drop the
+  # user into the guided form pre-filled with what we understood.
+  def compose
+    brief = params[:brief].to_s.strip
+    if brief.blank?
+      redirect_to(new_trip_path, alert: "Tell me a little about the day you want.") and return
+    end
+
+    @trip = current_user.trips.new(TripBriefParser.call(brief))
+    if @trip.valid?
+      @trip.plan    = TripPlanGenerator.call(@trip)
+      @trip.title   = @trip.plan["title"]
+      @trip.summary = @trip.plan["summary"]
+      @trip.save!
+      redirect_to @trip, notice: "Your day is ready ✨"
+    else
+      flash.now[:alert] = "I got most of it — just confirm the details below."
+      render :new, status: :unprocessable_entity
+    end
+  end
+
   def edit; end
 
   def update

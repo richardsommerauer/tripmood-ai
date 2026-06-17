@@ -1,0 +1,10 @@
+<div class="msg <%= message.from_user? ? 'msg-user' : 'msg-assistant' %>" id="<%= dom_id(message) %>">
+  <% if message.from_assistant? %>
+    <div class="md-body"><%= markdown(message.content) %></div>
+  <% else %>
+    <%= simple_format(message.content) %>
+  <% end %>
+  <% if message.file.attached? %>
+    <div class="msg-attach"><i class="fa-solid fa-paperclip me-1"></i><%= message.file.filename %></div>
+  <% end %>
+</div>

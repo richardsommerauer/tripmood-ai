@@ -1,0 +1,8 @@
+<%# The user bubble is appended optimistically by the chat-form Stimulus
+    controller, so here we only drop the intro/typing placeholders and append
+    the assistant's reply. On a full reload both messages come from the DB. %>
+<%= turbo_stream.remove "empty-state" %>
+<%= turbo_stream.remove "typing" %>
+<%= turbo_stream.append "messages" do %>
+  <%= render @assistant_message %>
+<% end %>

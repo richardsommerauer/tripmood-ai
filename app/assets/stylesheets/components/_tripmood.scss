@@ -65,6 +65,15 @@ body {
   border-radius: 50%; background: $orange; color: #fff; font-size: 1rem;
 }
 
+// ---- Home AI box (central "describe your day" starter) ----
+.home-ai {
+  display: flex; align-items: center; gap: 10px; max-width: 560px;
+  background: $card; border: 1.5px solid $orange; border-radius: 999px;
+  padding: 8px 8px 8px 18px;
+  box-shadow: 0 10px 26px rgba(80,52,28,.10), 0 0 0 4px $orange-soft;
+}
+.home-ai .chat-bar-input { font-size: 1.05rem; }
+
 // ---- Chat bar (real message input, LifeFolder-style) ----
 .chat-bar {
   display: flex; align-items: center; gap: 10px;
@@ -146,12 +155,27 @@ body {
 }
 
 // ---- Chat ----
-.chat-window { display: flex; flex-direction: column; gap: 12px; }
+.chat-window {
+  display: flex; flex-direction: column; gap: 12px;
+  max-height: 60vh; overflow-y: auto;
+  padding-right: 4px;
+}
 .msg { max-width: 80%; padding: 12px 16px; border-radius: 1.1rem; line-height: 1.5; }
 .msg-user { align-self: flex-end; background: $orange; color: #fff; border-bottom-right-radius: .3rem; }
 .msg-assistant { align-self: flex-start; background: $card; border: 1px solid $line; border-bottom-left-radius: .3rem; }
+.msg .md-body > :last-child { margin-bottom: 0; }
 .msg .msg-attach { font-size: .8rem; opacity: .85; margin-top: 6px; }
 .msg-meta { font-size: .72rem; color: $ink-soft; margin-top: 4px; }
+
+// Typing indicator (assistant is "thinking…")
+.msg-typing { display: inline-flex; gap: 5px; align-items: center; }
+.typing-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: $ink-soft;
+  animation: typing-bounce 1.2s infinite ease-in-out;
+}
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes typing-bounce { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
 
 // ---- Form chips (simple_form radio/checkbox as pills) ----
 .trip-form .form-label, .trip-form legend.col-form-label, .trip-form .col-form-label {

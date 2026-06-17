@@ -4,6 +4,11 @@
 # file attachment on the latest user message) and returns reply text.
 # Falls back to a helpful mock when no API key is configured.
 class ChatResponder
+  # ---- Token guard rails (keep the demo fast and cost-conscious) ----
+  MAX_HISTORY      = 12   # only send the last N messages to the model
+  MAX_CHARS        = 1500 # truncate any single message that's longer
+  MAX_REPLY_TOKENS = 800  # cap the assistant's response length
+
   SYSTEM_PROMPT = <<~PROMPT.freeze
     # Persona
     You are TripMood AI, a friendly and practical travel planning assistant.
@@ -47,7 +52,7 @@ class ChatResponder
         return AnthropicClient.chat(
           system_prompt: "#{SYSTEM_PROMPT}\n\n#{trip_context}",
           messages: conversation_messages,
-          max_tokens: 1024
+          max_tokens: MAX_REPLY_TOKENS
         ).strip
       rescue => e
         Rails.logger.warn("[ChatResponder] AI failed, using mock: #{e.message}")
@@ -59,9 +64,11 @@ class ChatResponder
   private
 
   # Just the user/assistant turns — the system prompt is passed separately.
+  # Guard rail: only the last MAX_HISTORY messages, each truncated to MAX_CHARS,
+  # so a long conversation can't balloon the token bill.
   def conversation_messages
-    @chat.messages.ordered.map do |m|
-      content = m.content.to_s
+    @chat.messages.ordered.last(MAX_HISTORY).map do |m|
+      content = m.content.to_s.truncate(MAX_CHARS)
       content += "\n[The user attached a file: #{m.file.filename}]" if m.file.attached?
       { role: m.role, content: content }
     end
@@ -89,9 +96,9 @@ class ChatResponder
     CTX
   end
 
-  # Render a list of tips inline; fall back to a dash when empty.
+  # Render a list of tips inline; cap at 3 to keep the context compact.
   def tip_list(tips)
-    list = Array(tips).reject(&:blank?)
+    list = Array(tips).reject(&:blank?).first(3)
     list.any? ? list.join("; ") : "—"
   end
 

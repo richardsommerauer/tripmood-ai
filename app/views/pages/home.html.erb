@@ -8,29 +8,35 @@
       Don't know what to do today? Tell TripMood your mood, time and budget —
       and get a realistic mini travel plan.
     </p>
-    <%= link_to new_trip_path, class: "btn btn-primary btn-lg" do %>
-      Plan my day <i class="fa-solid fa-wand-magic-sparkles ms-1"></i>
+    <%# Central AI box — describe the day in plain words, AI builds the trip %>
+    <%= form_with url: compose_trips_path, method: :post, class: "home-ai mx-auto" do %>
+      <span class="chat-bar-spark" aria-hidden="true">AI</span>
+      <input type="text" name="brief" class="chat-bar-input" autocomplete="off" autofocus
+             maxlength="500"
+             placeholder="Describe your day… e.g. “5 relaxed foodie hours in Bangalore, medium budget”"
+             aria-label="Describe the day you want">
+      <button type="submit" class="btn btn-primary chat-bar-send" data-turbo-submits-with="Planning your day…">
+        <i class="fa-solid fa-wand-magic-sparkles me-1"></i>Plan my day
+      </button>
     <% end %>
 
-    <div class="d-flex flex-wrap gap-2 justify-content-center mt-4">
-      <%= link_to new_trip_path, class: "tm-chip" do %><i class="fa-solid fa-face-smile"></i> Tired but curious<% end %>
-      <%= link_to new_trip_path, class: "tm-chip" do %><i class="fa-solid fa-wallet"></i> Low budget<% end %>
-      <%= link_to new_trip_path, class: "tm-chip" do %><i class="fa-solid fa-utensils"></i> Food + culture<% end %>
-      <%= link_to new_trip_path, class: "tm-chip" do %><i class="fa-solid fa-clock"></i> 5 hours in Bangalore<% end %>
+    <%# Quick example briefs — one click starts a plan %>
+    <div class="d-flex flex-wrap gap-2 justify-content-center mt-3">
+      <% [["fa-face-smile", "Tired but curious in Bangalore, 5 hours, low budget"],
+          ["fa-utensils", "Foodie evening in Bangkok, 3 hours, street food"],
+          ["fa-heart", "Romantic full day in Lisbon, medium budget"],
+          ["fa-mountain-sun", "Adventurous day in Hampi, ruins and hidden gems"]].each do |icon, brief| %>
+        <%= button_to compose_trips_path, params: { brief: brief }, method: :post,
+              class: "tm-chip", form: { class: "d-inline-block" } do %>
+          <i class="fa-solid <%= icon %>"></i> <%= brief.split(" in ").first %>
+        <% end %>
+      <% end %>
     </div>
-  </div>
 
-  <%# AI chat highlight — links into the plans, where each chat lives %>
-  <%= link_to trips_path, class: "tm-card chat-highlight chat-highlight-link p-4 p-md-4 mt-4 d-flex flex-column flex-md-row align-items-md-center gap-3 text-decoration-none" do %>
-    <div class="chat-highlight-icon"><i class="fa-solid fa-comments"></i></div>
-    <div class="flex-grow-1 text-center text-md-start">
-      <span class="tm-badge tm-badge-mood mb-2 d-inline-block"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>New</span>
-      <h2 class="h4 mb-1">Chat with TripMood AI about any plan</h2>
-      <p class="tm-ink-soft mb-0">Open a plan and chat with the assistant in real time — “make it cheaper”, “more relaxed”,
-        “add a food stop”, “good for families?”. Pick a plan to start chatting.</p>
-    </div>
-    <span class="chat-highlight-go flex-shrink-0"><i class="fa-solid fa-chevron-right"></i></span>
-  <% end %>
+    <p class="small tm-ink-soft mt-3 mb-0">
+      Prefer a guided form? <%= link_to "Plan step by step →", new_trip_path, class: "fw-6" %>
+    </p>
+  </div>
 
   <%= render "shared/hero_scene" %>
 

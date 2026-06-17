@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root to: "pages#home"
 
   resources :trips do
+    collection { post :compose } # natural-language "describe your day" starter
     resources :chats, only: [:index, :create]
   end
   resources :chats, only: [:show, :destroy] do

@@ -8,10 +8,17 @@ class MessagesController < ApplicationController
     if @message.save
       # Generate the assistant's reply (AI or mock) and persist it.
       reply = ChatResponder.call(@chat)
-      @chat.messages.create!(role: "assistant", content: reply)
-      redirect_to @chat
+      @assistant_message = @chat.messages.create!(role: "assistant", content: reply)
+      respond_to do |format|
+        format.turbo_stream # app/views/messages/create.turbo_stream.erb
+        format.html { redirect_to @chat }
+      end
     else
-      redirect_to @chat, alert: "Please type a message or attach a file."
+      respond_to do |format|
+        # Drop the optimistic typing indicator; keep the user on the page.
+        format.turbo_stream { render turbo_stream: turbo_stream.remove("typing"), status: :unprocessable_entity }
+        format.html { redirect_to @chat, alert: @message.errors.full_messages.to_sentence.presence || "Please type a message or attach a file." }
+      end
     end
   end
 
