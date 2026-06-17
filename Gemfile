@@ -19,6 +19,9 @@ gem "jbuilder"
 # Official Anthropic (Claude) SDK — powers the AI trip planner + chat
 gem "anthropic"
 
+# Render the assistant's Markdown replies as HTML in the chat
+gem "redcarpet"
+
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 

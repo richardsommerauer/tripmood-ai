@@ -33,6 +33,34 @@
     </div>
   <% end %>
 
+  <%# AI chat — promoted call-to-action, right under the summary %>
+  <div class="tm-card chat-highlight p-4 mb-4">
+    <div class="d-flex align-items-start gap-3">
+      <div class="chat-highlight-icon"><i class="fa-solid fa-comments"></i></div>
+      <div class="flex-grow-1">
+        <h2 class="h5 mb-1">Chat with TripMood AI about this day</h2>
+        <p class="tm-ink-soft small mb-3">Ask to make it cheaper, more relaxed, add food, find hidden gems… attach a photo or file too.</p>
+        <% if user_signed_in? %>
+          <%= button_to trip_chats_path(@trip), method: :post, class: "btn btn-primary" do %>
+            <i class="fa-regular fa-comments me-1"></i> Start a new chat
+          <% end %>
+          <% if @chats.any? %>
+            <div class="list-group mt-3">
+              <% @chats.each do |chat| %>
+                <%= link_to chat, class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+                  <span><i class="fa-regular fa-comment me-2"></i><%= chat.title %></span>
+                  <span class="badge bg-secondary rounded-pill"><%= chat.messages.count %></span>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <%= link_to "Log in to chat", new_user_session_path, class: "btn btn-outline-primary" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
   <%# Itinerary %>
   <div class="d-flex flex-column gap-3 mb-4">
     <% @trip.stops.each_with_index do |stop, i| %>
@@ -105,28 +133,6 @@
       <% end %>
     </div>
   <% end %>
-
-  <%# AI chat %>
-  <div class="tm-card p-4 mb-4">
-    <h2 class="h5"><i class="fa-solid fa-comments text-primary me-2"></i>Chat with TripMood AI about this day</h2>
-    <p class="tm-ink-soft small">Ask to make it cheaper, more relaxed, add food, find hidden gems… attach a photo or file too.</p>
-    <% if user_signed_in? %>
-      <%= button_to "Start a new chat", trip_chats_path(@trip), method: :post, class: "btn btn-primary" %>
-      <% if @chats.any? %>
-        <hr>
-        <div class="list-group">
-          <% @chats.each do |chat| %>
-            <%= link_to chat, class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
-              <span><i class="fa-regular fa-comment me-2"></i><%= chat.title %></span>
-              <span class="badge bg-secondary rounded-pill"><%= chat.messages.count %></span>
-            <% end %>
-          <% end %>
-        </div>
-      <% end %>
-    <% else %>
-      <%= link_to "Log in to chat", new_user_session_path, class: "btn btn-outline-primary" %>
-    <% end %>
-  </div>
 
   <div class="d-flex gap-2 justify-content-center flex-wrap">
     <%= link_to "Plan another day", new_trip_path, class: "btn btn-outline-primary" %>

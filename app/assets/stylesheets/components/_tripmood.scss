@@ -46,6 +46,18 @@ body {
 .hero-title .accent { color: $orange; }
 .hero-sub { font-size: 1.15rem; color: $ink-soft; }
 
+// ---- AI chat highlight (home + trip CTA) ----
+.chat-highlight {
+  background: linear-gradient(120deg, $orange-soft 0%, $sun-soft 55%, $green-soft 100%);
+  border-color: $orange;
+}
+.chat-highlight-icon {
+  display: inline-grid; place-items: center; flex-shrink: 0;
+  width: 56px; height: 56px; border-radius: 16px;
+  background: $orange; color: #fff; font-size: 1.5rem;
+  box-shadow: 0 8px 18px rgba(207,106,45,.35);
+}
+
 // ---- Chips ----
 .tm-chip {
   display: inline-flex; align-items: center; gap: 8px;

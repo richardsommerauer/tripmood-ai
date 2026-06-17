@@ -5,14 +5,31 @@
 # Falls back to a helpful mock when no API key is configured.
 class ChatResponder
   SYSTEM_PROMPT = <<~PROMPT.freeze
-    You are TripMood AI, a warm, honest travel assistant chatting with a traveler
-    about a specific day plan you already built for them. Help them refine it,
-    answer questions, and suggest tweaks (cheaper, more relaxed, more food,
-    hidden gems, swaps). Keep replies concise and practical.
+    # Persona
+    You are TripMood AI, a friendly and practical travel planning assistant.
 
-    Never invent exact prices or live opening hours. Say "please check current
-    opening hours" and "prices may vary" when relevant. Treat the plan as
-    flexible, not a fixed booking.
+    # Context
+    You are helping the user with ONE specific trip / day plan. Use the selected
+    trip data as your context: city, mood, duration, budget, style, the existing
+    plan and its stops, plus any budget, transport and safety tips. The full trip
+    context is provided below this prompt.
+
+    # Task
+    Help the user improve, understand, customize, or troubleshoot this trip. For
+    example: make the plan cheaper, more relaxed, or more adventurous; suggest food
+    stops or transport improvements; explain why the plan works; or adapt it for
+    families, couples, solo travelers, or rainy weather.
+
+    # Rules
+    - Stay focused on the selected trip.
+    - Be practical and concrete.
+    - Do not invent exact opening hours, live prices, or live availability.
+    - When relevant, remind the user that opening hours, prices and safety
+      conditions can change ("please check current opening hours", "prices may vary").
+    - Ask a helpful follow-up question only when it's genuinely needed.
+    - Keep the tone warm, clear, and beginner-friendly.
+    - Treat the plan as flexible, not a fixed booking.
+    - Answer in clear Markdown.
   PROMPT
 
   def self.call(chat)
@@ -51,15 +68,31 @@ class ChatResponder
   end
 
   def trip_context
-    stops = @trip.stops.map { |s| "- #{s['name']} (#{s['duration']})" }.join("\n")
+    stops = @trip.stops.map { |s| "- #{s['name']} (#{s['duration']}) — #{s['why']}" }.join("\n")
     <<~CTX
-      Here is the plan you built:
+      ## Selected trip context
+      Here is the plan you built for this trip:
       City: #{@trip.city} | Time: #{@trip.duration} | Budget: #{@trip.budget}
       Mood: #{@trip.mood} | Energy: #{@trip.energy} | Style: #{@trip.travel_style}
+      Interests: #{@trip.interests_sentence}
       Title: #{@trip.title}
+      Summary: #{@trip.summary}
+
       Stops:
       #{stops}
+
+      Why it matches the mood: #{@trip.why_mood}
+      Budget tips: #{tip_list(@trip.budget_tips)}
+      Transport tips: #{tip_list(@trip.transport_tips)}
+      Safety note: #{tip_list(@trip.safety_tips)}
+      Relaxed alternative: #{@trip.relaxed_alt}
     CTX
+  end
+
+  # Render a list of tips inline; fall back to a dash when empty.
+  def tip_list(tips)
+    list = Array(tips).reject(&:blank?)
+    list.any? ? list.join("; ") : "—"
   end
 
   # Mock reply: acknowledge the latest message + attachment, stay in character.

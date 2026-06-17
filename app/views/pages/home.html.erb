@@ -20,6 +20,20 @@
     </div>
   </div>
 
+  <%# AI chat highlight — makes the per-trip assistant visible from the home page %>
+  <div class="tm-card chat-highlight p-4 p-md-4 mt-4 d-flex flex-column flex-md-row align-items-md-center gap-3">
+    <div class="chat-highlight-icon"><i class="fa-solid fa-comments"></i></div>
+    <div class="flex-grow-1 text-center text-md-start">
+      <span class="tm-badge tm-badge-mood mb-2 d-inline-block"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>New</span>
+      <h2 class="h4 mb-1">Chat with TripMood AI about any plan</h2>
+      <p class="tm-ink-soft mb-0">Open a plan and ask follow-ups in real time — “make it cheaper”, “more relaxed”,
+        “add a food stop”, “good for families?”. The assistant answers using that trip as context.</p>
+    </div>
+    <%= link_to trips_path, class: "btn btn-primary btn-lg flex-shrink-0" do %>
+      <i class="fa-regular fa-comments me-1"></i> Start chatting
+    <% end %>
+  </div>
+
   <%= render "shared/hero_scene" %>
 
   <div class="row g-3 text-center feature-band">
